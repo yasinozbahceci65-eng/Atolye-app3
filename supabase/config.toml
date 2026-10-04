@@ -1,0 +1,5 @@
+[functions.ai-diagnose]
+verify_jwt = false
+
+[functions.iyzico-checkout]
+verify_jwt = false
