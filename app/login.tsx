@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
-import { Wrench, ShieldCheck, Eye } from 'lucide-react-native';
+import { ShieldCheck, Eye } from 'lucide-react-native';
 import { Colors } from '@/lib/colors';
 import { useAuth } from '@/lib/auth-context';
 import { GoogleLogo } from '@/components/GoogleLogo';
@@ -50,11 +50,13 @@ export default function LoginScreen() {
 
       <View style={styles.content}>
         <View style={styles.brandBlock}>
-          <View style={styles.logoCircle}>
-            <Wrench color={Colors.white} size={40} strokeWidth={2.2} />
-          </View>
-          <Text style={styles.title}>Atölyem</Text>
-          <Text style={styles.subtitle}>Atölye & Şantiye Yönetim Asistanınız</Text>
+          <Image
+            source={require('@/assets/images/ATOLYEM_20260829_082715_0000.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Atölye; Mimar, Usta</Text>
+          <Text style={styles.subtitle}>Atölye ve Şantiye Yönetim Asistanınız</Text>
         </View>
 
         <View style={styles.actionBlock}>
@@ -109,13 +111,9 @@ const styles = StyleSheet.create({
     flex: 1, justifyContent: 'center', alignItems: 'stretch',
     paddingHorizontal: 28, paddingTop: Platform.OS === 'web' ? 0 : 16, paddingBottom: 16,
   },
-  brandBlock: { alignItems: 'center', marginBottom: 52 },
-  logoCircle: {
-    width: 92, height: 92, borderRadius: 46, backgroundColor: Colors.primary,
-    justifyContent: 'center', alignItems: 'center',
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.26, shadowRadius: 16, elevation: 8,
-  },
-  title: { fontFamily: 'Inter-Bold', fontSize: 34, color: Colors.neutral800, marginTop: 20 },
+  brandBlock: { alignItems: 'center', marginBottom: 44 },
+  logo: { width: 180, height: 180 },
+  title: { fontFamily: 'Inter-Bold', fontSize: 26, color: Colors.neutral800, marginTop: 16, textAlign: 'center' },
   subtitle: { fontFamily: 'Inter-Regular', fontSize: 14, color: Colors.neutral500, marginTop: 6, textAlign: 'center' },
   actionBlock: { width: '100%', maxWidth: 420, alignSelf: 'center' },
   googleButton: {

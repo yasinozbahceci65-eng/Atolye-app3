@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Atolye Toolbox",
+    "name": "Atölye; Mimar, Usta",
     "slug": "atolye-toolbox",
     "owner": "theyasinoz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/ATOLYEM_20260829_082715_0000.png",
     "scheme": "atolyeapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,8 +19,8 @@
     "android": {
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#1a1a2e"
+        "foregroundImage": "./assets/images/ATOLYEM_20260829_082715_0000.png",
+        "backgroundColor": "#1a2a3e"
       },
       "permissions": [
         "android.permission.CAMERA",

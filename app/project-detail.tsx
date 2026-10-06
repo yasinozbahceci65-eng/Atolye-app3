@@ -111,6 +111,7 @@ export default function ProjectDetailScreen() {
   const [projectType, setProjectType] = useState('Boyama');
   const [area, setArea] = useState('');
   const [coats, setCoats] = useState(2);
+  const [includeCeiling, setIncludeCeiling] = useState(false);
   const [materials, setMaterials] = useState<ProjectMaterial[]>([]);
   const [calculated, setCalculated] = useState(false);
   const [showAddMaterial, setShowAddMaterial] = useState(false);
@@ -159,9 +160,10 @@ export default function ProjectDetailScreen() {
     if (!areaNum || areaNum <= 0) { Alert.alert('Uyarı', 'Lütfen geçerli bir alan girin'); return; }
     const template = TRADE_TEMPLATES.find(t => t.label === projectType)!;
     const coatMultiplier = template.hasCoats ? coats : 1;
+    const ceilingMultiplier = (projectType === 'Boyama' && includeCeiling) ? 2 : 1;
 
     const newMaterials: ProjectMaterial[] = template.materials.map((mat, idx) => {
-      const required = Math.ceil((areaNum / mat.coveragePerUnit) * coatMultiplier * 10) / 10;
+      const required = Math.ceil((areaNum * ceilingMultiplier / mat.coveragePerUnit) * coatMultiplier * 10) / 10;
       const matchedItem = items.find(i =>
         i.name.toLowerCase().includes(mat.materialName.toLowerCase()) &&
         i.unit_type === mat.unit
@@ -234,14 +236,17 @@ export default function ProjectDetailScreen() {
     try {
       let projectId = project?.id;
       if (projectId) {
-        await supabase.from('projects').update(projectData).eq('id', projectId);
+        const { error: updateErr } = await supabase.from('projects').update(projectData).eq('id', projectId);
+        if (updateErr) throw updateErr;
         await supabase.from('project_materials').delete().eq('project_id', projectId);
       } else {
-        const { data: newProj } = await supabase.from('projects').insert(projectData).select().single();
+        const { data: newProj, error: insertErr } = await supabase.from('projects').insert(projectData).select('id').maybeSingle();
+        if (insertErr) throw insertErr;
         projectId = newProj?.id;
       }
-      if (projectId && materials.length > 0) {
-        await supabase.from('project_materials').insert(
+      if (!projectId) throw new Error('Proje kimliği oluşturulamadı.');
+      if (materials.length > 0) {
+        const { error: matErr } = await supabase.from('project_materials').insert(
           materials.map(m => ({
             project_id: projectId,
             item_id: m.item_id,
@@ -251,24 +256,26 @@ export default function ProjectDetailScreen() {
             is_sufficient: m.is_sufficient,
           }))
         );
+        if (matErr) throw matErr;
       }
-    } catch {
+      setSaving(false);
+      router.back();
+    } catch (err: unknown) {
+      setSaving(false);
       if (!isOnline) {
         await offlineSync.addPendingChange({
           table: 'projects',
           operation: project?.id ? 'update' : 'insert',
           recordId: project?.id ?? 'temp-' + Date.now(),
           data: { ...projectData, materials },
-        });
+        }).catch(() => {});
         Alert.alert('Çevrimdışı Kaydedildi', 'İnternet bağlantısı geldiğinde senkronize edilecek.');
+        router.back();
       } else {
-        Alert.alert('Hata', 'Proje kaydedilemedi.');
-        setSaving(false);
-        return;
+        const msg = err instanceof Error ? err.message : 'Proje kaydedilemedi.';
+        Alert.alert('Hata', msg);
       }
     }
-    setSaving(false);
-    router.back();
   };
 
   const generateWhatsAppSummary = async () => {
@@ -482,6 +489,14 @@ export default function ProjectDetailScreen() {
 
         {currentTemplate?.hasCoats && (
           <View style={styles.coatsContainer}>
+            {projectType === 'Boyama' && (
+              <TouchableOpacity style={styles.ceilingRow} onPress={() => { setIncludeCeiling(!includeCeiling); setCalculated(false); }}>
+                <View style={[styles.checkbox, includeCeiling && styles.checkboxChecked]}>
+                  {includeCeiling && <CheckCircle2 color={Colors.white} size={14} />}
+                </View>
+                <Text style={styles.ceilingLabel}>Tavan da Boyanacak (2x alan)</Text>
+              </TouchableOpacity>
+            )}
             <View style={styles.coatsLabelRow}>
               <Layers color={Colors.primary} size={18} />
               <Text style={styles.coatsLabel}>Kat Sayısı</Text>
@@ -689,6 +704,10 @@ const styles = StyleSheet.create({
   },
   calcBtnText: { fontFamily: 'Inter-SemiBold', fontSize: 14, color: Colors.white },
   coatsContainer: { marginTop: 16 },
+  ceilingRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14, paddingVertical: 6 },
+  checkbox: { width: 22, height: 22, borderRadius: 6, borderWidth: 1.5, borderColor: Colors.neutral300, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white },
+  checkboxChecked: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  ceilingLabel: { fontFamily: 'Inter-Medium', fontSize: 14, color: Colors.neutral700 },
   coatsLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   coatsLabel: { fontFamily: 'Inter-SemiBold', fontSize: 13, color: Colors.neutral600 },
   coatsRow: { flexDirection: 'row', gap: 8 },

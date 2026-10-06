@@ -2,7 +2,6 @@ import { useEffect, Component, ReactNode } from 'react';
 import { Stack, useRouter, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import { ProProvider } from '@/lib/pro-context';
 import { ProfileProvider } from '@/lib/profile-context';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { GuestGuardProvider } from '@/lib/guest-guard';
@@ -93,9 +92,8 @@ export default function RootLayout() {
     <ErrorBoundary>
       <AuthProvider>
         <GuestGuardProvider>
-          <ProProvider>
-            <ProfileProvider>
-              <AuthGate />
+          <ProfileProvider>
+            <AuthGate />
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="login" />
@@ -104,13 +102,10 @@ export default function RootLayout() {
               <Stack.Screen name="scanner" />
               <Stack.Screen name="project-detail" />
               <Stack.Screen name="consult" />
-              <Stack.Screen name="ai-diagnose" />
-              <Stack.Screen name="pro-upgrade" />
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style="light" />
-            </ProfileProvider>
-          </ProProvider>
+          </ProfileProvider>
         </GuestGuardProvider>
       </AuthProvider>
     </ErrorBoundary>
