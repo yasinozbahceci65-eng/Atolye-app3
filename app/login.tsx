@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28, paddingTop: Platform.OS === 'web' ? 0 : 16, paddingBottom: 16,
   },
   brandBlock: { alignItems: 'center', marginBottom: 44 },
-  logo: { width: 180, height: 180 },
+  logo: { width: 110, height: 110 },
   title: { fontFamily: 'Inter-Bold', fontSize: 26, color: Colors.neutral800, marginTop: 16, textAlign: 'center' },
   subtitle: { fontFamily: 'Inter-Regular', fontSize: 14, color: Colors.neutral500, marginTop: 6, textAlign: 'center' },
   actionBlock: { width: '100%', maxWidth: 420, alignSelf: 'center' },
