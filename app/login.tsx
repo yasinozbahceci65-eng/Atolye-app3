@@ -49,7 +49,6 @@ export default function LoginScreen() {
       <View style={styles.headerGlow} />
 
       ​<View 'center' 1, flex: <View style={[styles.content, { flex: 1, justifyContent: 'center' }]}>
-
         <View style={styles.brandBlock}>
           <Image
             source={require('@/assets/images/ATOLYEM_20260829_082715_0000.png')}
