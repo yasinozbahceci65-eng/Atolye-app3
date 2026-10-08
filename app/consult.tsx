@@ -13,7 +13,7 @@ const WHATSAPP_NUMBER = '905537743488';
 export default function ConsultScreen() {
   const { type } = useLocalSearchParams<{ type: string }>();
   const router = useRouter();
-  const { isPro } = usePro();
+  const isPro = true;
   const isUsta = type === 'usta';
   const [photo, setPhoto] = useState<string | null>(null);
   const [description, setDescription] = useState('');
